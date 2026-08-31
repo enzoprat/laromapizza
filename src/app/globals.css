@@ -1,46 +1,113 @@
 @import "tailwindcss";
 
 /* =============================================================================
-   Système de design La Roma
-   Couleurs reprises du logo officiel : rouge #C11C1D, vert #529148, encre
-   #222221. Beaucoup de blanc, des touches de couleur, aucun cliché italien.
+   LA ROMA — système de design « Le mur »
+
+   Direction artistique : les 80 photos de la maison sont toutes prises à plat
+   sur le même mur de briques peint en blanc. C'est un parti pris photographique
+   déjà payé, cohérent, et personne d'autre ne l'a. On en fait le sol du site :
+   la couleur de page EST celle du mur (#EAE9E8, mesurée sur la photo). Les
+   produits ne flottent plus sur du blanc, ils sont posés sur leur propre fond.
+
+   Deux voix typographiques : Fraunces porte la parole de la maison, la pile
+   système (SF Pro sur Apple) porte l'interface. Le contraste entre les deux
+   remplace l'uniformité d'une police unique.
    ========================================================================== */
 
 @theme {
-  --color-ink: #17171a;
-  --color-ink-soft: #55555e;
-  --color-ink-muted: #8a8a95;
+  /* ---------------------------------------------------------------- SURFACES */
+  /* Mesuré sur le fond des photos produit, pas choisi : c'est ce qui fait
+     qu'une pizza détourée se pose sur la page au lieu d'y flotter. */
+  --color-mur: #ecebe8;          /* le mur : fond de page */
+  --color-mur-clair: #f5f4f1;    /* mur éclairci : blocs posés dessus */
+  --color-mur-creux: #e0ded9;    /* mur en creux : séparations, champs */
+  --color-blanc: #ffffff;        /* surface franche : cartes produit, feuilles */
 
-  --color-rosso-50: #fef2f2;
-  --color-rosso-100: #fde3e3;
-  --color-rosso-200: #fbcccc;
-  --color-rosso-500: #d92527;
+  /* ------------------------------------------------------------------ ENCRES */
+  --color-encre: #1a1614;        /* texte principal, chaud et non pas noir pur */
+  --color-encre-2: #56504c;      /* texte secondaire */
+  --color-encre-3: #8a827d;      /* mentions, légendes */
+
+  /* ------------------------------------------------------------------ SOMBRE */
+  --color-carbone: #14110f;      /* sections immersives */
+  --color-carbone-2: #241f1c;    /* surfaces posées sur le carbone */
+  --color-carbone-3: #3a322e;    /* bordures sur fond sombre */
+
+  /* --------------------------------------------------- ROUGE (couleur maison) */
+  --color-rosso-50: #fdf3f2;
+  --color-rosso-100: #fbe3e1;
+  --color-rosso-200: #f5c4c1;
+  --color-rosso-400: #e04a45;
+  --color-rosso-500: #d0292a;
+  --color-rosso: #c11c1d;
+  --color-rosso-700: #9d1618;
+  --color-rosso-900: #5e0f10;
+
+  /* --------------------------------------------- VERT (ouvert, offert, validé) */
+  --color-basilic-50: #f1f7ef;
+  --color-basilic-100: #dfeeda;
+  --color-basilic-200: #bedcb5;
+  --color-basilic: #529148;
+  --color-basilic-600: #497f40;
+  --color-basilic-700: #38632f;
+
+  /* ------------------------------------------------------------ TYPOGRAPHIES */
+  /* Interface : la pile système. SF Pro sur Apple, Segoe UI Variable sur
+     Windows. Zéro octet téléchargé, rendu natif, lisibilité maximale. */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+    "Segoe UI Variable Text", "Segoe UI", Roboto, system-ui, sans-serif;
+  /* Voix de la maison : un serif variable, chaleureux, artisanal. */
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+
+  /* ------------------------------------------------------------------ RAYONS */
+  /* Volontairement étagés : tout n'est pas un rectangle à 16 px. */
+  /* Noms explicites : `rounded-l` et `rounded-s` appartiennent déjà à Tailwind
+     (côtés gauche / start). On ne marche pas dessus. */
+  --radius-puce: 0.375rem;
+  --radius-champ: 0.625rem;
+  --radius-carte: 0.875rem;
+  --radius-bloc: 1.375rem;
+  --radius-large: 2rem;
+
+  /* ------------------------------------------------------------------ OMBRES */
+  /* Teintées d'encre chaude : une ombre noire pure sur un fond crème est grise. */
+  --shadow-doux: 0 1px 2px rgb(26 22 20 / 0.04), 0 6px 20px -10px rgb(26 22 20 / 0.12);
+  --shadow-releve: 0 2px 6px rgb(26 22 20 / 0.05), 0 24px 48px -22px rgb(26 22 20 / 0.28);
+  --shadow-flottant: 0 -2px 30px -8px rgb(26 22 20 / 0.18);
+  --shadow-rouge: 0 6px 24px -8px rgb(193 28 29 / 0.55);
+
+  /* ------------------------------------------------------- COMPATIBILITÉ ---
+     Le premier système de design nommait les couleurs autrement. Plutôt que de
+     réécrire trente-neuf fichiers d'un coup — dont toute l'administration, qui
+     est un outil de comptoir et non une vitrine —, les anciens noms sont
+     redirigés vers la nouvelle palette. Les écrans héritent donc du nouveau
+     ton sans risque de régression, et les surfaces client sont retravaillées
+     une à une. */
+  --color-ink: #1a1614;
+  --color-ink-soft: #56504c;
+  --color-ink-muted: #8a827d;
+  --color-sand: #f5f4f1;
+  --color-line: #e0ded9;
+  --color-cream: #ecebe8;
+
   --color-rosso-600: #c11c1d;
-  --color-rosso-700: #a01718;
-  --color-rosso-900: #6b1011;
+  --color-rosso-300: #ef9a97;
 
-  --color-basil-50: #f2f8f1;
-  --color-basil-100: #e2f0e0;
-  --color-basil-200: #c4e0c0;
+  --color-basil-50: #f1f7ef;
+  --color-basil-100: #dfeeda;
+  --color-basil-200: #bedcb5;
   --color-basil-500: #5da052;
   --color-basil-600: #529148;
-  --color-basil-700: #3f7238;
+  --color-basil-700: #38632f;
 
-  --color-cream: #fdfbf7;
-  --color-sand: #f4f1ea;
-  --color-line: #e9e6df;
+  --radius-card: 0.875rem;
+  --shadow-card: 0 1px 2px rgb(26 22 20 / 0.04), 0 6px 20px -10px rgb(26 22 20 / 0.12);
+  --shadow-lift: 0 2px 6px rgb(26 22 20 / 0.05), 0 24px 48px -22px rgb(26 22 20 / 0.28);
+  --shadow-bar: 0 -2px 30px -8px rgb(26 22 20 / 0.18);
 
-  --font-display: var(--font-display), "Trebuchet MS", system-ui, sans-serif;
-  --font-sans: var(--font-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
-
-  --radius-card: 1rem;
-  --radius-sheet: 1.5rem;
-
-  --shadow-card: 0 1px 2px rgb(23 23 26 / 0.04), 0 4px 16px -4px rgb(23 23 26 / 0.08);
-  --shadow-lift: 0 2px 4px rgb(23 23 26 / 0.05), 0 12px 32px -8px rgb(23 23 26 / 0.16);
-  --shadow-bar: 0 -2px 24px -6px rgb(23 23 26 / 0.16);
-
-  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  /* ---------------------------------------------------------------- MOUVEMENT */
+  --ease-sortie: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-doux: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @layer base {
@@ -48,26 +115,40 @@
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
   }
+
   body {
-    background: #fff;
-    color: var(--color-ink);
+    background: var(--color-mur);
+    color: var(--color-encre);
     font-family: var(--font-sans);
-    /* Évite le "rubber band" horizontal sur mobile. */
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
-  h1, h2, h3, h4 {
+
+  /* La voix de la maison : optique et douceur poussées, chasse resserrée. */
+  h1, h2, h3, .voix {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    font-variation-settings: "SOFT" 40, "WONK" 1;
+    letter-spacing: -0.021em;
+    line-height: 1.04;
   }
-  /* Cible tactile confortable partout : le pouce est l'outil principal. */
+
+  /* Les prix et les quantités s'alignent toujours : chiffres tabulaires. */
+  .chiffres, output, [data-prix] {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
   button, a, input, select, textarea { touch-action: manipulation; }
+
   :focus-visible {
-    outline: 2px solid var(--color-rosso-600);
-    outline-offset: 2px;
+    outline: 2px solid var(--color-rosso);
+    outline-offset: 3px;
     border-radius: 4px;
   }
-  /* Respecte le réglage système : pas d'animation imposée. */
+
+  ::selection { background: var(--color-rosso); color: #fff; }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
@@ -77,113 +158,185 @@
   }
 }
 
+/* ------------------------------------------------------------------ UTILITÉS */
+
 @utility no-scrollbar {
   scrollbar-width: none;
   -ms-overflow-style: none;
   &::-webkit-scrollbar { display: none; }
 }
 
-/* Zone sûre iPhone : la barre panier ne doit pas passer sous l'indicateur. */
-@utility pb-safe {
-  padding-bottom: max(env(safe-area-inset-bottom), 0px);
-}
-@utility bottom-safe {
-  bottom: max(env(safe-area-inset-bottom), 0px);
+@utility pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 0px); }
+@utility pt-safe { padding-top: max(env(safe-area-inset-top), 0px); }
+
+/* Le mur, en fond de section. La photo est en surimpression très légère : on
+   veut la matière, pas le motif. */
+@utility fond-mur {
+  background-color: var(--color-mur);
+  background-image: url("/img/brand/mur.webp");
+  /* Une seule occurrence, étirée : une photo de mur ne se raccorde pas, la
+     répétition créerait une couture visible. */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-blend-mode: multiply;
+  /* La matière s'efface vers le bas : la section suivante s'enchaîne sans
+     ligne de démarcation. */
+  mask-image: linear-gradient(to bottom, #000 62%, transparent 100%);
 }
 
-/* ------------------------------------------------------------------ ANIMATIONS */
-
-@keyframes sheet-in {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
-}
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-@keyframes pop-in {
-  0% { transform: scale(0.96); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-@keyframes rise {
-  from { transform: translateY(0.75rem); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-@keyframes pulse-ring {
-  0% { box-shadow: 0 0 0 0 rgb(193 28 29 / 0.45); }
-  70% { box-shadow: 0 0 0 14px rgb(193 28 29 / 0); }
-  100% { box-shadow: 0 0 0 0 rgb(193 28 29 / 0); }
+/* Filet éditorial : sépare sans dessiner une carte de plus. */
+@utility filet {
+  border-top: 1px solid color-mix(in srgb, var(--color-encre) 12%, transparent);
 }
 
-.animate-sheet-in { animation: sheet-in 0.28s var(--ease-out-soft); }
-.animate-fade-in { animation: fade-in 0.2s ease-out; }
-.animate-pop-in { animation: pop-in 0.2s var(--ease-out-soft); }
-.animate-rise { animation: rise 0.35s var(--ease-out-soft) both; }
-.animate-pulse-ring { animation: pulse-ring 1.6s ease-out infinite; }
+/* --------------------------------------------------------------- ANIMATIONS */
 
-/* --------------------------------------------------------------- COMPOSANTS */
+@keyframes voile-in { from { opacity: 0 } to { opacity: 1 } }
+@keyframes feuille-in { from { transform: translateY(100%) } to { transform: translateY(0) } }
+@keyframes monte {
+  from { opacity: 0; transform: translateY(1.25rem) }
+  to { opacity: 1; transform: translateY(0) }
+}
+@keyframes pastille {
+  0% { box-shadow: 0 0 0 0 rgb(193 28 29 / 0.5) }
+  70% { box-shadow: 0 0 0 12px rgb(193 28 29 / 0) }
+  100% { box-shadow: 0 0 0 0 rgb(193 28 29 / 0) }
+}
+@keyframes battement {
+  0%, 100% { opacity: 1 }
+  50% { opacity: 0.35 }
+}
+@keyframes glisse-droite {
+  from { transform: translateX(-0.5rem); opacity: 0 }
+  to { transform: translateX(0); opacity: 1 }
+}
+
+.anim-voile { animation: voile-in 0.22s ease-out }
+.anim-feuille { animation: feuille-in 0.3s var(--ease-sortie) }
+.anim-monte { animation: monte 0.5s var(--ease-sortie) both }
+.anim-pastille { animation: pastille 1.8s ease-out infinite }
+.anim-battement { animation: battement 2s ease-in-out infinite }
+.anim-glisse { animation: glisse-droite 0.3s var(--ease-sortie) both }
+
+/* Révélation au défilement — la classe est posée par <Reveal>. */
+.reveal {
+  opacity: 0;
+  transform: translateY(1.5rem);
+  transition: opacity 0.6s var(--ease-sortie), transform 0.6s var(--ease-sortie);
+}
+.reveal-vu { opacity: 1; transform: none }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none }
+}
+
+/* -------------------------------------------------------------- COMPOSANTS */
 
 @layer components {
-  /* Les variantes n'empilent pas @apply : chaque classe est autonome. */
+  /* --- Boutons ------------------------------------------------------------
+     Chaque variante est autonome : Tailwind v4 refuse @apply sur une classe
+     déclarée dans le même calque. */
+  .b-rouge {
+    @apply inline-flex select-none items-center justify-center gap-2 font-semibold
+           transition-[transform,background-color,box-shadow,color] duration-200
+           disabled:pointer-events-none disabled:opacity-45
+           bg-rosso text-white shadow-rouge hover:bg-rosso-700 active:scale-[0.98];
+  }
+  .b-encre {
+    @apply inline-flex select-none items-center justify-center gap-2 font-semibold
+           transition-[transform,background-color,box-shadow,color] duration-200
+           disabled:pointer-events-none disabled:opacity-45
+           bg-encre text-white hover:bg-carbone active:scale-[0.98];
+  }
+  .b-contour {
+    @apply inline-flex select-none items-center justify-center gap-2 font-semibold
+           transition-[transform,background-color,box-shadow,color] duration-200
+           disabled:pointer-events-none disabled:opacity-45
+           border border-encre/15 bg-blanc text-encre
+           hover:border-encre/35 hover:bg-mur-clair active:scale-[0.98];
+  }
+  .b-fantome {
+    @apply inline-flex select-none items-center justify-center gap-2 font-semibold
+           transition-[transform,background-color,box-shadow,color] duration-200
+           disabled:pointer-events-none disabled:opacity-45
+           text-encre-2 hover:bg-encre/8 hover:text-encre active:scale-[0.98];
+  }
+  .b-clair {
+    @apply inline-flex select-none items-center justify-center gap-2 font-semibold
+           transition-[transform,background-color,box-shadow,color] duration-200
+           disabled:pointer-events-none disabled:opacity-45
+           bg-blanc text-encre hover:bg-mur active:scale-[0.98];
+  }
+
+  .b-xl { @apply h-15 rounded-full px-8 text-[1.0625rem]; }
+  .b-l  { @apply h-13 rounded-full px-6 text-[0.9375rem]; }
+  .b-m  { @apply h-11 rounded-full px-5 text-sm; }
+  .b-s  { @apply h-9 rounded-full px-4 text-[0.8125rem]; }
+
+  /* --- Étiquette : le petit label capitales qui structure les sections ----- */
+  .etiquette {
+    @apply inline-flex items-center gap-1.5 text-[0.6875rem] font-bold uppercase
+           tracking-[0.14em];
+  }
+
+  /* --- Pastille : badge compact ------------------------------------------- */
+  .pastille {
+    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5
+           text-[0.6875rem] font-bold tracking-wide;
+  }
+
+  /* --- Champ de formulaire ------------------------------------------------ */
+  .champ {
+    @apply h-13 w-full rounded-champ border border-encre/14 bg-blanc px-4 text-[16px]
+           text-encre transition-[border-color,box-shadow] duration-200
+           placeholder:text-encre-3
+           focus:border-rosso focus:outline-none focus:ring-4 focus:ring-rosso/12;
+  }
+
+  /* --- Surfaces ------------------------------------------------------------ */
+  .surface {
+    @apply rounded-carte border border-encre/8 bg-blanc shadow-doux;
+  }
+  .surface-plate {
+    @apply rounded-carte bg-mur-clair;
+  }
+}
+
+/* ---------------------------------------------------------- COMPATIBILITÉ --
+   Classes du premier système, redéfinies sur les nouveaux jetons. Elles
+   maintiennent l'administration et les écrans encore non retravaillés dans une
+   apparence cohérente, sans les figer. */
+@layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full font-semibold
-           transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50
-           bg-rosso-600 text-white hover:bg-rosso-700 active:scale-[0.98]
-           shadow-[0_4px_16px_-4px_rgb(193_28_29/0.5)];
+    @apply inline-flex select-none items-center justify-center gap-2 rounded-full font-semibold
+           transition-all duration-200 disabled:pointer-events-none disabled:opacity-45
+           bg-rosso text-white shadow-rouge hover:bg-rosso-700 active:scale-[0.98];
   }
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full font-semibold
-           transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50
-           bg-ink text-white hover:opacity-90 active:scale-[0.98];
+    @apply inline-flex select-none items-center justify-center gap-2 rounded-full font-semibold
+           transition-all duration-200 disabled:pointer-events-none disabled:opacity-45
+           bg-encre text-white hover:bg-carbone active:scale-[0.98];
   }
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-full font-semibold
-           transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50
-           border border-line bg-white text-ink hover:bg-sand active:scale-[0.98];
+    @apply inline-flex select-none items-center justify-center gap-2 rounded-full font-semibold
+           transition-all duration-200 disabled:pointer-events-none disabled:opacity-45
+           border border-encre/15 bg-white text-encre hover:bg-mur-clair active:scale-[0.98];
   }
-  .btn-lg { @apply h-14 px-7 text-base; }
+  .btn-lg { @apply h-13 px-6 text-[0.9375rem]; }
   .btn-md { @apply h-11 px-5 text-sm; }
-  .btn-sm { @apply h-9 px-4 text-sm; }
+  .btn-sm { @apply h-9 px-4 text-[0.8125rem]; }
 
-  .card { @apply rounded-card border border-line bg-white shadow-card; }
+  .card { @apply rounded-carte border border-encre/8 bg-white shadow-doux; }
 
   .field {
-    @apply h-13 w-full rounded-xl border border-line bg-white px-4 text-[16px] text-ink
-           placeholder:text-ink-muted transition-colors
-           focus:border-rosso-600 focus:outline-none focus:ring-2 focus:ring-rosso-600/15;
+    @apply h-13 w-full rounded-champ border border-encre/14 bg-white px-4 text-[16px]
+           text-encre transition-[border-color,box-shadow] duration-200
+           placeholder:text-encre-3
+           focus:border-rosso focus:outline-none focus:ring-4 focus:ring-rosso/12;
   }
 
   .chip {
-    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide;
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5
+           text-[0.6875rem] font-bold tracking-wide;
   }
-}
-
-/* ------------------------------------------------------------ IMPRESSION */
-/* Ticket cuisine : format étroit, noir sur blanc, rien d'autre sur la page. */
-@media print {
-  body * { visibility: hidden !important; }
-  #ticket, #ticket * { visibility: visible !important; }
-  #ticket {
-    display: block !important;
-    position: absolute;
-    inset: 0 auto auto 0;
-    width: 72mm;
-    padding: 4mm 2mm;
-    font-family: ui-monospace, "SFMono-Regular", "Menlo", monospace;
-    font-size: 12px;
-    line-height: 1.35;
-    color: #000;
-  }
-  #ticket h1 { font-size: 30px; font-weight: 800; margin: 0 0 2px; letter-spacing: -0.02em; }
-  #ticket .ticket-mode { font-size: 16px; font-weight: 800; margin: 0 0 6px; }
-  #ticket p { margin: 2px 0; }
-  #ticket hr { border: 0; border-top: 1px dashed #000; margin: 6px 0; }
-  #ticket table { width: 100%; border-collapse: collapse; }
-  #ticket td { vertical-align: top; padding: 3px 0; font-size: 13px; }
-  #ticket td.qty { width: 9mm; font-weight: 800; }
-  #ticket td.amount { text-align: right; white-space: nowrap; }
-  #ticket .opt { font-size: 11px; }
-  #ticket .note { font-weight: 800; }
-  #ticket .total { font-size: 18px; font-weight: 800; margin-top: 6px; }
-  @page { margin: 4mm; }
 }

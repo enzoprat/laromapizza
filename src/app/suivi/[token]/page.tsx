@@ -17,14 +17,15 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+/** Un état, une phrase. Les emojis en titre font « gabarit », pas « maison ». */
 const STATUS_TITLE: Record<string, string> = {
-  received: "Commande reçue 🍕",
-  accepted: "Commande acceptée 👌",
-  preparing: "En préparation 🔥",
-  ready: "Votre commande est prête ✅",
-  delivering: "En cours de livraison 🛵",
-  completed: "Commande terminée — merci ! 🙌",
-  delivered: "Commande livrée — bon appétit ! 🙌",
+  received: "Commande reçue",
+  accepted: "C'est accepté",
+  preparing: "En préparation",
+  ready: "Votre commande est prête",
+  delivering: "En cours de livraison",
+  completed: "Commande terminée. Merci !",
+  delivered: "Commande livrée. Bon appétit !",
   cancelled: "Commande annulée",
 };
 
@@ -38,7 +39,7 @@ export default async function TrackPage({ params }: { params: Promise<{ token: s
   const isDelivery = order.order_type === "delivery";
 
   return (
-    <main className="min-h-dvh bg-cream">
+    <main className="min-h-dvh bg-mur">
       <TrackPoller token={token} status={order.status} />
 
       <div className="mx-auto max-w-2xl px-4 py-6 sm:px-6 sm:py-10">
@@ -51,7 +52,7 @@ export default async function TrackPage({ params }: { params: Promise<{ token: s
 
         {/* ------------------------------------------------------------ STATUT */}
         <div className="mt-6 rounded-card border border-line bg-white p-5 shadow-card sm:p-6">
-          <h1 className="font-display text-2xl font-extrabold leading-tight text-ink sm:text-3xl">
+          <h1 className="text-[2rem] font-semibold leading-[1.02] text-encre sm:text-[2.75rem]">
             {STATUS_TITLE[order.status] ?? "Votre commande"}
           </h1>
 

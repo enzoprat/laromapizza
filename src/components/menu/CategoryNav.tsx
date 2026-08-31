@@ -59,8 +59,8 @@ export function CategoryNav({ categories }: { categories: Category[] }) {
   };
 
   return (
-    <nav aria-label="Catégories de la carte" className="border-b border-line bg-white/95 backdrop-blur">
-      <div ref={barRef} className="no-scrollbar flex gap-2 overflow-x-auto px-4 py-2.5 sm:px-6">
+    <nav aria-label="Catégories de la carte" className="border-b border-encre/10 bg-mur/88 backdrop-blur-xl">
+      <div ref={barRef} className="no-scrollbar mx-auto flex max-w-[64rem] gap-1.5 overflow-x-auto px-4 py-2.5 sm:px-8">
         {categories.map((c) => (
           <button
             key={c.slug}
@@ -69,10 +69,10 @@ export function CategoryNav({ categories }: { categories: Category[] }) {
             onClick={() => goTo(c.slug)}
             aria-current={active === c.slug ? "true" : undefined}
             className={cn(
-              "shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-200",
+              "shrink-0 rounded-full px-3.5 py-2 text-[0.875rem] font-semibold transition-colors duration-200",
               active === c.slug
-                ? "bg-ink text-white"
-                : "bg-sand text-ink-soft hover:bg-line hover:text-ink",
+                ? "bg-encre text-blanc"
+                : "text-encre-2 hover:bg-encre/8 hover:text-encre",
             )}
           >
             {c.name}

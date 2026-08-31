@@ -29,6 +29,7 @@ export async function getHighlights(limit = 6): Promise<HighlightProduct[]> {
      JOIN product_variants v ON v.product_id = p.id AND v.is_active = true
      JOIN categories c ON c.id = p.category_id
      WHERE p.is_active = true AND c.slug LIKE 'pizzas-%'
+       AND p.image IS NOT NULL          -- une vedette sans photo laisse un trou
        AND (p.is_popular = true OR p.is_new = true)
      GROUP BY p.id
      ORDER BY p.is_popular DESC, p.is_new DESC, min(v.price)

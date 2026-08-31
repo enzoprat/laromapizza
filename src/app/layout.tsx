@@ -1,20 +1,19 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Inter } from "next/font/google";
+import { Fraunces } from "next/font/google";
 import "./globals.css";
 import { SITE_URL } from "@/lib/utils";
 import { ServiceWorker } from "@/components/site/ServiceWorker";
 
-const display = Bricolage_Grotesque({
+/**
+ * Une seule police téléchargée : Fraunces, la voix de la maison.
+ * L'interface utilise la pile système (SF Pro sur Apple) — zéro octet, rendu
+ * natif, et un contraste franc avec le serif là où la marque doit parler.
+ */
+const fraunces = Fraunces({
   subsets: ["latin"],
-  weight: ["600", "700", "800"],
-  variable: "--font-display",
+  variable: "--font-fraunces",
   display: "swap",
-});
-
-const sans = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  display: "swap",
+  axes: ["SOFT", "WONK"],
 });
 
 export const metadata: Metadata = {
@@ -27,7 +26,7 @@ export const metadata: Metadata = {
     "Commandez vos pizzas La Roma en quelques secondes. Click & collect et livraison à Bègles, Bordeaux, Bordeaux Bastide et Cenon. Pizzas 31 et 40 cm, pâtes fraîches, Tex Mex.",
   applicationName: "La Roma Pizza",
   manifest: "/manifest.webmanifest",
-  appleWebApp: { capable: true, title: "La Roma", statusBarStyle: "default" },
+  appleWebApp: { capable: true, title: "La Roma", statusBarStyle: "black-translucent" },
   formatDetection: { telephone: true },
   openGraph: {
     type: "website",
@@ -39,17 +38,20 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#c11c1d",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#eae9e8" },
+    { media: "(prefers-color-scheme: dark)", color: "#14110f" },
+  ],
   width: "device-width",
   initialScale: 1,
-  // On autorise le zoom : l'interdire est un problème d'accessibilité.
+  // Le zoom reste autorisé : l'interdire est un problème d'accessibilité.
   maximumScale: 5,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${display.variable} ${sans.variable}`}>
-      <body className="min-h-dvh bg-white antialiased">
+    <html lang="fr" className={fraunces.variable}>
+      <body className="min-h-dvh bg-mur antialiased">
         {children}
         <ServiceWorker />
       </body>

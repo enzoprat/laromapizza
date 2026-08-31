@@ -31,7 +31,9 @@ export async function generateMetadata({
     `Commandez vos pizzas chez ${restaurant.name}, ${restaurant.street}, ${restaurant.postal_code} ${restaurant.city}.`;
 
   return {
-    title,
+    // `absolute` : le titre porte déjà la marque, le gabarit global la
+    // rajoutait une seconde fois et allongeait la balise pour rien.
+    title: { absolute: title },
     description,
     alternates: { canonical: `/restaurants/${restaurant.slug}` },
     openGraph: {

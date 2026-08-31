@@ -89,17 +89,19 @@ export function MenuBrowser({
         <CategoryNav categories={categories} />
       </div>
 
-      <div className="mx-auto max-w-3xl px-4 pb-40 sm:px-6">
+      <div className="mx-auto max-w-[64rem] px-5 pb-44 sm:px-8">
         {categories.map((category) => (
-          <section key={category.slug} id={`cat-${category.slug}`} className="scroll-mt-32 pt-8">
-            <h2 className="font-display text-xl font-bold tracking-tight text-ink sm:text-2xl">
+          <section key={category.slug} id={`cat-${category.slug}`} className="scroll-mt-32 pt-12">
+            <h2 className="text-[1.75rem] font-semibold leading-tight text-encre sm:text-[2.25rem]">
               {category.name}
             </h2>
             {category.description ? (
-              <p className="mt-1 text-sm leading-snug text-ink-soft">{category.description}</p>
+              <p className="mt-1.5 max-w-xl text-[0.9375rem] leading-relaxed text-encre-2">
+                {category.description}
+              </p>
             ) : null}
 
-            <ul className="mt-4 space-y-2.5">
+            <ul className="mt-5 border-t border-encre/10">
               {category.products.map((product) => (
                 <ProductRow
                   key={product.id}

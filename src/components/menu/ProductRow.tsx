@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Plus, Check } from "lucide-react";
+import { Check, Plus } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/domain/money";
@@ -10,9 +10,11 @@ import { ProductBadges } from "./ProductBadges";
 import { useCart } from "@/store/cart";
 
 /**
- * Ligne produit compacte : beaucoup d'information, peu de hauteur.
- * Un produit sans choix à faire s'ajoute directement depuis la liste ; les
- * autres ouvrent la fiche de configuration.
+ * Ligne de la carte.
+ *
+ * Rangée éditoriale plutôt que carte : un filet de séparation, pas de boîte.
+ * Trente-six rectangles blancs empilés fatiguent l'œil ; une liste réglée se
+ * parcourt beaucoup plus vite, et la photo garde toute l'attention.
  */
 export function ProductRow({
   product,
@@ -21,132 +23,118 @@ export function ProductRow({
 }: {
   product: Product;
   onOpen: (p: Product) => void;
-  /** Ajout direct depuis la liste : sert à proposer un accompagnement. */
   onAdded?: (p: Product) => void;
 }) {
   const addLine = useCart((s) => s.addLine);
-  const [justAdded, setJustAdded] = useState(false);
+  const [ajoute, setAjoute] = useState(false);
 
-  const needsChoice =
+  const aDesChoix =
     product.variants.length > 1 ||
-    product.optionGroups.some((g) => g.min_select > 0) ||
     product.optionGroups.length > 0 ||
     product.extras.length > 0;
 
-  const cheapest = Math.min(...product.variants.map((v) => v.price));
-  const disabled = product.out_of_stock;
+  const prixMini = Math.min(...product.variants.map((v) => v.price));
+  const indisponible = product.out_of_stock;
 
-  const quickAdd = () => {
-    const variant = product.variants.find((v) => v.is_default) ?? product.variants[0];
-    if (!variant) return;
+  const ajoutRapide = () => {
+    const variante = product.variants.find((v) => v.is_default) ?? product.variants[0];
+    if (!variante) return;
     addLine({
       productId: product.id,
       productSlug: product.slug,
       productName: product.name,
       image: product.image,
-      variantId: variant.id,
-      variantName: product.variants.length > 1 ? variant.name : null,
-      sizeCode: variant.size_code,
-      unitPrice: variant.price,
+      variantId: variante.id,
+      variantName: product.variants.length > 1 ? variante.name : null,
+      sizeCode: variante.size_code,
+      unitPrice: variante.price,
       options: [],
       instructions: null,
     });
-    setJustAdded(true);
-    window.setTimeout(() => setJustAdded(false), 1100);
+    setAjoute(true);
+    window.setTimeout(() => setAjoute(false), 1100);
     onAdded?.(product);
   };
 
-  const handle = () => {
-    if (disabled) return;
-    if (needsChoice) onOpen(product);
-    else quickAdd();
+  const action = () => {
+    if (indisponible) return;
+    if (aDesChoix) onOpen(product);
+    else ajoutRapide();
   };
 
   return (
-    <li>
-      <div
+    <li className="group relative border-b border-encre/10 last:border-0">
+      <button
+        type="button"
+        onClick={action}
+        disabled={indisponible}
         className={cn(
-          "group relative flex gap-3 rounded-card border border-line bg-white p-3 transition-all duration-200",
-          disabled ? "opacity-55" : "hover:border-ink/15 hover:shadow-card",
+          "flex w-full items-start gap-4 py-4 text-left transition-colors duration-200",
+          indisponible ? "cursor-not-allowed opacity-45" : "hover:bg-encre/[0.035]",
         )}
+        aria-label={
+          indisponible
+            ? `${product.name} — en rupture`
+            : aDesChoix
+              ? `Personnaliser ${product.name}`
+              : `Ajouter ${product.name} au panier`
+        }
       >
-        <button
-          type="button"
-          onClick={handle}
-          disabled={disabled}
-          className="flex min-w-0 flex-1 items-start gap-3 text-left disabled:cursor-not-allowed"
-          aria-label={
-            disabled
-              ? `${product.name} — en rupture`
-              : needsChoice
-                ? `Personnaliser ${product.name}`
-                : `Ajouter ${product.name} au panier`
-          }
-        >
-          <span className="min-w-0 flex-1">
-            <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-              <span className="font-display text-[15px] font-bold leading-snug text-ink">
-                {product.name}
-              </span>
-              <ProductBadges product={product} />
+        <span className="min-w-0 flex-1 pl-1">
+          <span className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+            <span className="voix text-[1.0625rem] font-semibold leading-snug text-encre">
+              {product.name}
             </span>
-
-            {product.description ? (
-              <span className="mt-1 line-clamp-2 block text-[13px] leading-snug text-ink-soft">
-                {product.description}
-              </span>
-            ) : null}
-
-            <span className="mt-1.5 block text-[15px] font-bold text-ink">
-              {product.variants.length > 1 ? (
-                <>
-                  <span className="text-xs font-medium text-ink-muted">dès </span>
-                  {formatPrice(cheapest)}
-                </>
-              ) : (
-                formatPrice(cheapest)
-              )}
-            </span>
-
-            {disabled ? (
-              <span className="mt-1 block text-xs font-semibold uppercase tracking-wide text-rosso-600">
-                En rupture
-              </span>
-            ) : null}
+            <ProductBadges product={product} />
           </span>
 
-          {product.image ? (
-            <span className="relative block size-[88px] shrink-0 overflow-hidden rounded-xl bg-sand">
-              <Image
-                src={product.image}
-                alt=""
-                fill
-                sizes="88px"
-                className="object-cover transition-transform duration-300 group-hover:scale-105"
-              />
+          {product.description ? (
+            <span className="mt-1 line-clamp-2 block text-[0.8125rem] leading-relaxed text-encre-2">
+              {product.description}
             </span>
           ) : null}
-        </button>
 
-        {/* Bouton d'ajout : cible confortable au pouce, toujours au même endroit. */}
-        <button
-          type="button"
-          onClick={handle}
-          disabled={disabled}
-          aria-label={needsChoice ? `Personnaliser ${product.name}` : `Ajouter ${product.name}`}
-          className={cn(
-            // Le bouton chevauche le coin de la photo : l'anneau blanc l'en
-            // détache pour qu'il reste lisible sur n'importe quel visuel.
-            "absolute bottom-2.5 right-2.5 grid size-9 shrink-0 place-items-center rounded-full ring-2 ring-white transition-all duration-200 active:scale-90",
-            justAdded
-              ? "bg-basil-600 text-white"
-              : "bg-ink text-white hover:bg-rosso-600 disabled:bg-line disabled:text-ink-muted",
-            product.image ? "translate-y-0" : "",
-          )}
-        >
-          {justAdded ? <Check className="size-4" aria-hidden /> : <Plus className="size-4" aria-hidden />}
-        </button>
-      </div>
+          <span className="chiffres mt-2 block text-[0.9375rem] font-semibold text-encre">
+            {product.variants.length > 1 ? (
+              <span className="text-[0.75rem] font-medium text-encre-3">dès </span>
+            ) : null}
+            {formatPrice(prixMini)}
+          </span>
+
+          {indisponible ? (
+            <span className="etiquette mt-1.5 block text-rosso">En rupture</span>
+          ) : null}
+        </span>
+
+        {product.image ? (
+          <span className="relative block size-[92px] shrink-0 overflow-hidden rounded-carte bg-mur-clair">
+            <Image
+              src={product.image}
+              alt=""
+              fill
+              sizes="92px"
+              className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.06]"
+            />
+          </span>
+        ) : null}
+      </button>
+
+      {/* Bouton d'ajout : cible franche, toujours au même endroit. */}
+      <button
+        type="button"
+        onClick={action}
+        disabled={indisponible}
+        aria-label={aDesChoix ? `Personnaliser ${product.name}` : `Ajouter ${product.name}`}
+        className={cn(
+          // Posé sur le coin de la photo, détaché par un anneau couleur mur.
+          "absolute bottom-3 right-1 grid size-9 place-items-center rounded-full ring-[3px] ring-mur transition-all duration-200 active:scale-90",
+          ajoute
+            ? "bg-basilic text-blanc"
+            : "bg-encre text-blanc hover:bg-rosso disabled:bg-encre/30",
+        )}
+      >
+        {ajoute ? <Check className="size-4" aria-hidden /> : <Plus className="size-4" aria-hidden />}
+      </button>
     </li>
   );
 }
