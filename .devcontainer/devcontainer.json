@@ -1,0 +1,29 @@
+{
+  "name": "La Roma Pizza",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:22",
+
+  // Les dépendances sont installées à la création de la machine, pas au
+  // premier lancement : le serveur démarre ensuite immédiatement.
+  "postCreateCommand": "npm install",
+
+  // Démarre le serveur dès l'ouverture du Codespace.
+  "postAttachCommand": "npm run dev",
+
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "La Roma Pizza",
+      "onAutoForward": "openPreview",
+      "visibility": "public"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bradlc.vscode-tailwindcss",
+        "dbaeumer.vscode-eslint"
+      ]
+    }
+  }
+}
