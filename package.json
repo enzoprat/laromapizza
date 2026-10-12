@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "db:reset": "rm -rf .pglite && echo 'Base locale réinitialisée (elle sera recréée au prochain démarrage).'"
+    "db:reset": "rm -rf .pglite && echo 'Base locale réinitialisée (elle sera recréée au prochain démarrage).'",
+    "photos": "node scripts/photos.mjs",
+    "prebuild": "node scripts/photos.mjs"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.2.17",

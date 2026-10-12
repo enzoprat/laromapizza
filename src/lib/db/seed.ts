@@ -2,8 +2,7 @@ import type { Database } from "./index";
 import { CATEGORIES, OPTION_GROUPS, EXTRAS, EXTRA_CATEGORIES } from "./seed-data";
 import { hashPassword } from "../auth/password";
 import { randomBytes } from "node:crypto";
-import { existsSync } from "node:fs";
-import path from "node:path";
+import { PHOTOS_PRODUITS } from "./photos";
 
 /**
  * Données de démarrage.
@@ -136,12 +135,15 @@ export function normalizeCity(value: string): string {
  * Photo d'un produit, déduite de son identifiant.
  *
  * Déposer `public/img/food/produits/<slug>.webp` suffit à l'associer : pas de
- * chemin à recopier dans les données, et une nouvelle photo est prise en compte
- * sans toucher au code.
+ * chemin à recopier dans les données.
+ *
+ * La liste est figée à la compilation plutôt que lue sur le disque : sur un
+ * hébergeur serverless, `public/` est servi par le CDN et n'existe pas dans la
+ * fonction — une lecture du système de fichiers n'y trouverait jamais rien, et
+ * le catalogue partirait en ligne sans la moindre photo.
  */
 function photoFor(slug: string): string | null {
-  const relative = `/img/food/produits/${slug}.webp`;
-  return existsSync(path.join(process.cwd(), "public", relative)) ? relative : null;
+  return PHOTOS_PRODUITS.has(slug) ? `/img/food/produits/${slug}.webp` : null;
 }
 
 export async function seed(db: Database) {
