@@ -25,17 +25,25 @@ complète ainsi que les quatre établissements.
 
 **Accès à l'administration** — http://localhost:3000/admin
 
-| Rôle | Identifiant | Mot de passe |
-|---|---|---|
-| Super Admin | `super@laroma-pizza.com` | `laroma2026` |
-| Bègles | `begles@laroma-pizza.com` | `laroma2026` |
-| Bordeaux | `bordeaux@laroma-pizza.com` | `laroma2026` |
-| Bordeaux Bastide | `bordeaux-bastide@laroma-pizza.com` | `laroma2026` |
-| Cenon | `cenon@laroma-pizza.com` | `laroma2026` |
+| Rôle | Identifiant |
+|---|---|
+| Super Admin | `super@laroma-pizza.com` |
+| Bègles | `begles@laroma-pizza.com` |
+| Bordeaux | `bordeaux@laroma-pizza.com` |
+| Bordeaux Bastide | `bordeaux-bastide@laroma-pizza.com` |
+| Cenon | `cenon@laroma-pizza.com` |
 
-> Ces mots de passe sont ceux du seed de développement. **Changez-les depuis
-> _Établissements → Accès_ avant toute mise en ligne**, ou définissez
-> `SEED_ADMIN_PASSWORD` avant la première création de la base.
+**Le mot de passe n'est pas dans le code.** Ce dépôt est public : une valeur en
+dur y ouvrirait l'administration des quatre établissements. À la première
+création de la base, un mot de passe est tiré au hasard et **affiché une fois
+dans la console du serveur** — gardez-le. Pour le choisir vous-même, définissez
+`SEED_ADMIN_PASSWORD` avant ce premier démarrage :
+
+```bash
+SEED_ADMIN_PASSWORD="votre-mot-de-passe" npm run dev
+```
+
+Il se change ensuite à tout moment depuis _Établissements → Accès_.
 
 `npm run db:reset` repart d'une base vierge.
 

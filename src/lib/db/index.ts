@@ -1,5 +1,6 @@
 import "server-only";
 import { readFile, rm } from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 
 /**
@@ -84,7 +85,19 @@ async function createPglite(): Promise<Database> {
    * En production (DATABASE_URL renseigné) ce chemin ne sert jamais.
    */
   const isBuild = process.env.NEXT_PHASE === "phase-production-build";
-  const dir = isBuild ? undefined : path.join(process.cwd(), ".pglite");
+  /**
+   * En production sans DATABASE_URL — typiquement une preview déployée —, le
+   * répertoire de l'application est en lecture seule. On écrit alors dans le
+   * dossier temporaire, seul emplacement inscriptible. La base y est recréée
+   * à chaque démarrage à froid : parfait pour une démonstration, inadapté à
+   * une exploitation réelle, qui doit passer par DATABASE_URL.
+   */
+  const ephemere = !isBuild && process.env.NODE_ENV === "production";
+  const dir = isBuild
+    ? undefined
+    : ephemere
+      ? path.join(os.tmpdir(), "laroma-pglite")
+      : path.join(process.cwd(), ".pglite");
 
   let pg: Awaited<ReturnType<typeof openPglite>>;
   try {

@@ -1,6 +1,7 @@
 import type { Database } from "./index";
 import { CATEGORIES, OPTION_GROUPS, EXTRAS, EXTRA_CATEGORIES } from "./seed-data";
 import { hashPassword } from "../auth/password";
+import { randomBytes } from "node:crypto";
 import { existsSync } from "node:fs";
 import path from "node:path";
 
@@ -330,8 +331,25 @@ export async function seed(db: Database) {
   }
 
   // ------------------------------------------------------------------ ADMINS
-  const defaultPassword = process.env.SEED_ADMIN_PASSWORD || "laroma2026";
-  const hash = await hashPassword(defaultPassword);
+  /**
+   * Aucun mot de passe par défaut dans le code : ce dépôt est public, et une
+   * valeur en dur ouvrirait l'administration des quatre établissements à qui
+   * la lit. À défaut de SEED_ADMIN_PASSWORD, on en tire un au hasard et on
+   * l'affiche une fois dans la console du serveur.
+   */
+  const fourni = process.env.SEED_ADMIN_PASSWORD?.trim();
+  const motDePasse = fourni || randomBytes(9).toString("base64url");
+  if (!fourni) {
+    console.warn(
+      `\n  ─────────────────────────────────────────────────────────────\n` +
+      `  Comptes administrateur créés.\n` +
+      `  Identifiant : super@laroma-pizza.com\n` +
+      `  Mot de passe : ${motDePasse}\n` +
+      `  (généré aléatoirement — définissez SEED_ADMIN_PASSWORD pour le choisir)\n` +
+      `  ─────────────────────────────────────────────────────────────\n`,
+    );
+  }
+  const hash = await hashPassword(motDePasse);
   await q(
     `INSERT INTO admins (email,name,password_hash,role,restaurant_id) VALUES ($1,$2,$3,$4,$5)`,
     ["super@laroma-pizza.com", "Direction La Roma", hash, "super_admin", null],
