@@ -21,7 +21,8 @@ export function LoginForm() {
     <form action={action} className="space-y-4">
       <div>
         <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-ink-soft">E-mail</label>
-        <input id="email" name="email" type="email" autoComplete="username" required className="field" />
+        <input id="email" name="email" type="email" autoComplete="username"
+          autoCapitalize="none" autoCorrect="off" spellCheck={false} required className="field" />
       </div>
       <div>
         <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-ink-soft">Mot de passe</label>

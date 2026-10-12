@@ -9,7 +9,11 @@ export type LoginState = { error?: string };
 
 export async function loginAction(_prev: LoginState, formData: FormData): Promise<LoginState> {
   const email = String(formData.get("email") ?? "");
-  const password = String(formData.get("password") ?? "");
+  // Les espaces et retours à la ligne accrochés lors d'un copier-coller sont
+  // retirés : personne ne choisit volontairement un mot de passe bordé
+  // d'espaces, et c'est une cause d'échec de connexion aussi fréquente
+  // qu'invisible pour l'utilisateur.
+  const password = String(formData.get("password") ?? "").trim();
   if (!email || !password) return { error: "Renseignez votre e-mail et votre mot de passe." };
 
   // Freine les tentatives répétées sans bloquer un responsable qui se trompe.
