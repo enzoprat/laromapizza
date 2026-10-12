@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Un package-lock.json traîne dans le dossier personnel : sans cette ligne,
+  // Next le prend pour la racine du projet et trace les fichiers au mauvais endroit.
+  outputFileTracingRoot: process.cwd(),
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,

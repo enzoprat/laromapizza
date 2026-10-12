@@ -1,5 +1,5 @@
 import "server-only";
-import { readFile, rm } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
@@ -65,25 +65,47 @@ async function createPostgres(url: string): Promise<Database> {
   };
 }
 
-async function openPglite(dir: string | undefined) {
+/**
+ * Ouvre la base locale, avec quelques tentatives espacées.
+ *
+ * PGlite n'accepte qu'un seul accès à la fois sur un répertoire. En
+ * développement, Next compile les routes à la demande et peut tenter une
+ * seconde ouverture pendant que la première s'initialise : l'échec est alors
+ * transitoire et une courte attente suffit.
+ */
+async function openPglite(dir: string | undefined, tentatives = 6) {
   const { PGlite } = await import("@electric-sql/pglite");
-  const pg = dir ? new PGlite(dir) : new PGlite();
-  await pg.waitReady;
-  return pg;
+  let derniereErreur: unknown;
+
+  for (let i = 0; i < tentatives; i++) {
+    try {
+      const pg = dir ? new PGlite(dir) : new PGlite();
+      await pg.waitReady;
+      return pg;
+    } catch (erreur) {
+      derniereErreur = erreur;
+      await new Promise((r) => setTimeout(r, 200 * (i + 1)));
+    }
+  }
+
+  /**
+   * On ne supprime JAMAIS la base automatiquement.
+   *
+   * Une version précédente effaçait le répertoire dès qu'une ouverture
+   * échouait, en supposant une corruption. Un simple conflit d'accès suffisait
+   * alors à détruire les commandes en cours — exactement le genre de « réparation »
+   * qui fait plus de dégâts que la panne. En cas d'échec persistant, on
+   * s'arrête et on explique quoi faire.
+   */
+  throw new Error(
+    `Base locale inaccessible (${dir}). Un autre serveur l'utilise peut-être déjà : ` +
+      `n'en lancez qu'un seul à la fois. Si le problème persiste, ` +
+      `\`npm run db:reset\` repart d'une base neuve — les commandes de test seront perdues.`,
+    { cause: derniereErreur },
+  );
 }
 
 async function createPglite(): Promise<Database> {
-  /**
-   * Pendant `next build`, plusieurs processus pré-rendent en parallèle. PGlite
-   * n'accepte pas deux processus sur le même répertoire, et copier une base
-   * qu'un serveur de développement est en train d'écrire donne une copie
-   * incohérente — qui fait *geler* le worker, pas échouer proprement.
-   *
-   * Chaque worker de build travaille donc sur une base en mémoire, reconstruite
-   * par les migrations et le seed. Le pré-rendu ne fait que lire un catalogue
-   * déterministe, et il n'y a plus ni contention ni fichiers temporaires.
-   * En production (DATABASE_URL renseigné) ce chemin ne sert jamais.
-   */
   const isBuild = process.env.NEXT_PHASE === "phase-production-build";
   /**
    * En production sans DATABASE_URL — typiquement une preview déployée —, le
@@ -99,20 +121,10 @@ async function createPglite(): Promise<Database> {
       ? path.join(os.tmpdir(), "laroma-pglite")
       : path.join(process.cwd(), ".pglite");
 
-  let pg: Awaited<ReturnType<typeof openPglite>>;
-  try {
-    pg = await openPglite(dir);
-  } catch {
-    // Un arrêt brutal du serveur peut laisser le répertoire dans un état que
-    // Postgres refuse de rouvrir. Plutôt que de planter au démarrage, on repart
-    // d'une base neuve : migrations et seed la reconstruisent à l'identique.
-    console.warn("[db] Base locale illisible — recréation depuis le schéma et le seed.");
-    if (dir) await rm(dir, { recursive: true, force: true });
-    pg = await openPglite(dir);
-  }
+  const pg = await openPglite(dir);
 
   if (dir) {
-    // Fermeture propre à l'arrêt : c'est elle qui évite la corruption ci-dessus.
+    // Fermeture propre à l'arrêt : limite les incohérences sur disque.
     const shutdown = async () => {
       try { await pg.close(); } catch { /* déjà fermée */ }
       process.exit(0);
