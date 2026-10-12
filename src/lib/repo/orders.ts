@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { sql, sqlOne, transaction } from "../db";
 import type { PriceBreakdown } from "../orders/price";
 import type { OrderStatus, OrderType } from "../types";
+import { jsonArray } from "../db/json";
 
 export type OrderCustomer = {
   firstName: string;
@@ -138,23 +139,28 @@ export async function createOrder(params: {
   });
 }
 
+/** Les colonnes JSON sont normalisées ici, une fois pour toutes. */
+function normaliser(o: OrderRow | null): OrderRow | null {
+  return o ? { ...o, applied_promotions: jsonArray(o.applied_promotions) } : null;
+}
+
 export async function getOrderByToken(token: string): Promise<OrderRow | null> {
-  return sqlOne<OrderRow>(
+  return normaliser(await sqlOne<OrderRow>(
     `SELECT ${ORDER_COLUMNS} FROM orders o JOIN restaurants r ON r.id = o.restaurant_id
      WHERE o.public_token = $1`, [token],
-  );
+  ));
 }
 
 export async function getOrderById(id: number): Promise<OrderRow | null> {
-  return sqlOne<OrderRow>(
+  return normaliser(await sqlOne<OrderRow>(
     `SELECT ${ORDER_COLUMNS} FROM orders o JOIN restaurants r ON r.id = o.restaurant_id
      WHERE o.id = $1`, [id],
-  );
+  ));
 }
 
 export async function getOrderItems(orderIds: number[]): Promise<OrderItemRow[]> {
   if (!orderIds.length) return [];
-  return sql<OrderItemRow>(
+  const lignes = await sql<OrderItemRow>(
     `SELECT i.id, i.order_id, i.product_name, i.variant_name, i.quantity,
             i.unit_price, i.line_total, i.instructions,
             COALESCE(
@@ -168,6 +174,7 @@ export async function getOrderItems(orderIds: number[]): Promise<OrderItemRow[]>
      ORDER BY i.order_id, i.position, i.id`,
     [orderIds],
   );
+  return lignes.map((l) => ({ ...l, options: jsonArray(l.options) }));
 }
 
 export async function getOrderEvents(orderId: number) {
@@ -216,13 +223,14 @@ export async function listOrders(filters: OrderListFilters): Promise<OrderRow[]>
   }
   params.push(Math.min(filters.limit ?? 100, 300));
 
-  return sql<OrderRow>(
+  const commandes = await sql<OrderRow>(
     `SELECT ${ORDER_COLUMNS} FROM orders o JOIN restaurants r ON r.id = o.restaurant_id
      ${where.length ? `WHERE ${where.join(" AND ")}` : ""}
      ORDER BY o.created_at DESC
      LIMIT $${params.length}`,
     params,
   );
+  return commandes.map((o) => ({ ...o, applied_promotions: jsonArray(o.applied_promotions) }));
 }
 
 const TIMESTAMP_BY_STATUS: Partial<Record<OrderStatus, string>> = {

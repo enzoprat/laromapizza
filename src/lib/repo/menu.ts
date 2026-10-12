@@ -1,6 +1,7 @@
 import "server-only";
 import { sql } from "../db";
 import type { Category, Extra, Menu, OptionGroup, Product, Variant } from "../types";
+import { jsonObject } from "../db/json";
 
 type ProductRow = {
   id: number; category_id: number; slug: string; name: string; description: string | null;
@@ -91,7 +92,12 @@ export async function getMenu(restaurantId: number): Promise<Menu> {
     groupsByProduct.set(g.product_id, list);
   }
 
-  const extrasById = new Map(extras.map((e) => [e.id, e]));
+  // price_by_size est du jsonb : selon le pilote il arrive en objet ou en
+  // chaîne. Non normalisé, l'accès par taille renverrait undefined et le
+  // supplément serait facturé au tarif par défaut, sans la moindre alerte.
+  const extrasById = new Map(
+    extras.map((e) => [e.id, { ...e, price_by_size: jsonObject<Record<string, number>>(e.price_by_size) }]),
+  );
   const extrasByCategory = new Map<number, Extra[]>();
   for (const link of extraLinks) {
     const extra = extrasById.get(link.extra_id);

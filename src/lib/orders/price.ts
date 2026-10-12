@@ -3,6 +3,7 @@ import { sql } from "../db";
 import { applyPromotions, type AppliedPromotion, type PricedLine, type Promotion } from "../domain/promotions";
 import { serviceAt, type OpeningHour } from "../domain/opening";
 import type { OrderType } from "../types";
+import { jsonObject } from "../db/json";
 
 /**
  * Recalcul serveur du panier.
@@ -121,7 +122,9 @@ export async function priceCart(opts: {
   const productById = new Map(products.map((p) => [p.id, p]));
   const variantById = new Map(variants.map((v) => [v.id, v]));
   const optionById = new Map(optionRows.map((o) => [o.id, o]));
-  const extraById = new Map(extraRows.map((e) => [e.id, e]));
+  const extraById = new Map(
+    extraRows.map((e) => [e.id, { ...e, price_by_size: jsonObject<Record<string, number>>(e.price_by_size) }]),
+  );
 
   // Suppléments réellement autorisés pour ces catégories.
   const categoryIds = [...new Set(products.map((p) => p.category_id))];
