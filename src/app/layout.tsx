@@ -34,7 +34,11 @@ export const metadata: Metadata = {
     siteName: "La Roma Pizza",
     url: SITE_URL,
   },
-  robots: { index: true, follow: true },
+  // Hors domaine public (préproduction), on interdit l'indexation au niveau
+  // de la page elle-même, en plus du robots.txt.
+  robots: SITE_URL.includes("laroma-pizza.com")
+    ? { index: true, follow: true }
+    : { index: false, follow: false },
 };
 
 export const viewport: Viewport = {
